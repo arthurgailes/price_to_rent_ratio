@@ -1,0 +1,64 @@
+---
+title: "Price to Rent Ratio"
+format: 
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  include: false
+  messages: false
+---
+
+Lower numbers are better for prospective homebuyers. For example, a \$500,000 home would rent for 4,200 (\$50k per year) at a 10 to 1 ratio, recuperating its value in 10 years. At 30 to 1, a \$500,000 home would rent at \$1,400.
+
+
+```{r}
+pacman::p_load(collapse, mapview)
+load("data.rds")
+```
+
+
+
+```{r}
+
+ratio_groups <- c(3, 10, 15, 20, 25, 30, Inf)
+map_data <- census_data |> 
+  fsubset(
+    B25077_001E> 5e4 & !grepl("^((15)|([67])|(02))", GEOID)) |> 
+  fmutate(
+    `Price to Rent Ratio` = round(B25077_001E / (B25058_001E * 12), 0.1),
+    Label = (cut(
+      `Price to Rent Ratio`,
+      include.lowest = TRUE,
+      breaks = ratio_groups,
+      labels = paste(ratio_groups[1:length(ratio_groups)-1], "to 1")
+    ))  
+  ) |>
+  fsubset(!is.na(`Price to Rent Ratio`)) |> 
+  dplyr::slice_sample(n = 200) |>
+  fselect(
+    name = NAME, `Price to Rent Ratio`, `Home Value` = B25077_001E, 
+    `Contract Rent` = B25058_001E, Label, geometry)
+
+summary(map_data)
+```
+
+```{r}
+#| include: true
+#| code-fold: true
+# hcl.pals("sequential")
+pal <- hcl.colors(length(levels(map_data$Label)), "BuGn", rev = FALSE)
+mapview(
+  map_data,
+  zcol = "Label",
+  # burst = TRUE,
+  layer.name = "Price to Rent Ratio<br>(Lower is Better for Homeowners)",
+  col.regions = pal,
+  color = colorspace::darken(pal, amount = 0.3),
+  map.types = c(
+    "CartoDB.Positron", "OpenStreetMap", "Esri.WorldImagery", "OpenTopoMap"
+  ),
+  lwd = 2
+)
+```
+
