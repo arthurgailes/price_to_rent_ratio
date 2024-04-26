@@ -2,15 +2,17 @@
 title: "Price to Rent Ratio"
 format: 
   html:
+    theme: lumen
     code-fold: true
     code-summary: "Show the code"
+    include-in-header:
+      - file: github-corner.html
 execute:
   include: false
   messages: false
 ---
 
 Lower numbers are better for prospective homebuyers. For example, a \$500,000 home would rent for 4,200 (\$50k per year) at a 10 to 1 ratio, recuperating its value in 10 years. At 30 to 1, a \$500,000 home would rent at \$1,400.
-
 
 ```{r}
 pacman::p_load(collapse, mapview)
@@ -35,7 +37,7 @@ map_data <- census_data |>
     ))  
   ) |>
   fsubset(!is.na(`Price to Rent Ratio`)) |> 
-  dplyr::slice_sample(n = 200) |>
+  # dplyr::slice_sample(n = 200) |>
   fselect(
     name = NAME, `Price to Rent Ratio`, `Home Value` = B25077_001E, 
     `Contract Rent` = B25058_001E, Label, geometry)
@@ -45,7 +47,9 @@ summary(map_data)
 
 ```{r}
 #| include: true
-#| code-fold: true
+#| echo: false
+#| out-height: 80vh
+#| out-width: 80vw
 # hcl.pals("sequential")
 pal <- hcl.colors(length(levels(map_data$Label)), "BuGn", rev = FALSE)
 mapview(
@@ -62,3 +66,4 @@ mapview(
 )
 ```
 
+Source: 2022 5-year American Community Survey. Showing `r nrow(map_data) |> scales::comma()` places with home value and rent data, and median home values over $50k.
