@@ -1,0 +1,9 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Price to Rent Ratio",
+    "section": "",
+    "text": "Lower numbers are better for prospective homebuyers. For example, a $500,000 home would rent for 4,200 ($50k per year) at a 10 to 1 ratio, recuperating its value in 10 years. At 30 to 1, a $500,000 home would rent at $1,400.\n\n\nCode\n# hcl.pals(\"sequential\")\npal &lt;- hcl.colors(length(levels(map_data$Label)), \"BuGn\", rev = FALSE)\nmapview(\n  map_data,\n  zcol = \"Label\",\n  # burst = TRUE,\n  layer.name = \"Price to Rent Ratio&lt;br&gt;(Lower is Better for Homeowners)\",\n  col.regions = pal,\n  color = colorspace::darken(pal, amount = 0.3),\n  map.types = c(\n    \"CartoDB.Positron\", \"OpenStreetMap\", \"Esri.WorldImagery\", \"OpenTopoMap\"\n  ),\n  lwd = 2\n)"
+  }
+]
